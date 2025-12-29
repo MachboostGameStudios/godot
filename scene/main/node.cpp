@@ -407,6 +407,20 @@ void Node::_propagate_after_exit_tree() {
 	emit_signal(SceneStringName(tree_exited));
 }
 
+void Node::_propagate_pre_exit_tree() {
+
+	data.blocked++;
+
+	for (HashMap<StringName, Node *>::Iterator I = data.children.last(); I; --I) {
+		I->value->_propagate_pre_exit_tree();
+	}
+
+	data.blocked--;
+
+	notification(NOTIFICATION_PRE_EXIT_TREE, true);
+
+}
+
 void Node::_propagate_exit_tree() {
 	//block while removing children
 
@@ -416,6 +430,7 @@ void Node::_propagate_exit_tree() {
 		SceneDebugger::remove_from_cache(data.scene_file_path, this);
 	}
 #endif
+
 	data.blocked++;
 
 	for (HashMap<StringName, Node *>::Iterator I = data.children.last(); I; --I) {
@@ -1759,6 +1774,10 @@ void Node::remove_child(RequiredParam<Node> p_child) {
 	 *  All children indices and counters will be updated next time the
 	 *  cache is re-generated.
 	 */
+
+	if (data.tree) {
+		child->_propagate_pre_exit_tree();
+	}
 
 	data.blocked++;
 	child->_set_tree(nullptr);
@@ -3999,6 +4018,7 @@ void Node::_bind_methods() {
 	BIND_CONSTANT(NOTIFICATION_POST_ENTER_TREE);
 	BIND_CONSTANT(NOTIFICATION_DISABLED);
 	BIND_CONSTANT(NOTIFICATION_ENABLED);
+	BIND_CONSTANT(NOTIFICATION_PRE_EXIT_TREE)
 	BIND_CONSTANT(NOTIFICATION_RESET_PHYSICS_INTERPOLATION);
 
 	BIND_CONSTANT(NOTIFICATION_EDITOR_PRE_SAVE);
