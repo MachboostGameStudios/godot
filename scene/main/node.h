@@ -308,6 +308,7 @@ private:
 	void _propagate_deferred_notification(int p_notification, bool p_reverse);
 	void _propagate_enter_tree();
 	void _propagate_ready();
+	void _propagate_pre_exit_tree();
 	void _propagate_exit_tree();
 	void _propagate_after_exit_tree();
 	void _propagate_physics_interpolated(bool p_interpolated);
@@ -468,6 +469,7 @@ public:
 		NOTIFICATION_POST_ENTER_TREE = 27,
 		NOTIFICATION_DISABLED = 28,
 		NOTIFICATION_ENABLED = 29,
+		NOTIFICATION_PRE_EXIT_TREE = 300,
 		NOTIFICATION_RESET_PHYSICS_INTERPOLATION = 2001, // A GodotSpace Odyssey.
 		// Keep these linked to Node.
 
