@@ -424,6 +424,7 @@ public:
 
 	void set_current_scene(Node *p_scene);
 	Node *get_current_scene() const;
+	bool is_changing_scene() const;
 	Error change_scene_to_file(const String &p_path);
 	Error change_scene_to_packed(RequiredParam<PackedScene> rp_scene);
 	Error change_scene_to_node(RequiredParam<Node> rp_node);
