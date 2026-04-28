@@ -1674,6 +1674,10 @@ void SceneTree::_flush_scene_change() {
 	}
 }
 
+bool SceneTree::is_changing_scene() const {
+	return prev_scene_id.is_valid() || pending_new_scene_id.is_valid();
+}
+
 Error SceneTree::change_scene_to_file(const String &p_path) {
 	ERR_FAIL_COND_V_MSG(!Thread::is_main_thread(), ERR_INVALID_PARAMETER, "Changing scene can only be done from the main thread.");
 	Ref<PackedScene> new_scene = ResourceLoader::load(p_path);
@@ -1708,6 +1712,8 @@ Error SceneTree::change_scene_to_node(RequiredParam<Node> rp_node) {
 
 	if (current_scene) {
 		prev_scene_id = current_scene->get_instance_id();
+		// Give nodes a chance to respond to the scene about to be changed.
+		emit_signal(SNAME("before_scene_changed"));
 		// Let as many side effects as possible happen or be queued now,
 		// so they are run before the scene is actually deleted.
 		root->remove_child(current_scene);
@@ -1930,6 +1936,7 @@ void SceneTree::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("change_scene_to_file", "path"), &SceneTree::change_scene_to_file);
 	ClassDB::bind_method(D_METHOD("change_scene_to_packed", "packed_scene"), &SceneTree::change_scene_to_packed);
 	ClassDB::bind_method(D_METHOD("change_scene_to_node", "node"), &SceneTree::change_scene_to_node);
+	ClassDB::bind_method(D_METHOD("is_changing_scene"), &SceneTree::is_changing_scene);
 
 	ClassDB::bind_method(D_METHOD("reload_current_scene"), &SceneTree::reload_current_scene);
 	ClassDB::bind_method(D_METHOD("unload_current_scene"), &SceneTree::unload_current_scene);
@@ -1952,6 +1959,7 @@ void SceneTree::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "physics_interpolation"), "set_physics_interpolation_enabled", "is_physics_interpolation_enabled");
 
 	ADD_SIGNAL(MethodInfo("tree_changed"));
+	ADD_SIGNAL(MethodInfo("before_scene_changed"));
 	ADD_SIGNAL(MethodInfo("scene_changed"));
 	ADD_SIGNAL(MethodInfo("tree_process_mode_changed")); //editor only signal, but due to API hash it can't be removed in run-time
 	ADD_SIGNAL(MethodInfo("node_added", PropertyInfo(Variant::OBJECT, "node", PROPERTY_HINT_RESOURCE_TYPE, "Node")));
