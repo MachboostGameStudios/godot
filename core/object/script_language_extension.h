@@ -166,7 +166,7 @@ public:
 
 	GDVIRTUAL0RC_REQUIRED(TypedArray<Dictionary>, _get_script_method_list)
 
-	virtual void get_script_method_list(List<MethodInfo> *r_methods) const override {
+	virtual void get_script_method_list(List<MethodInfo> *r_methods, bool b_include_base = true) const override {
 		TypedArray<Dictionary> sl;
 		GDVIRTUAL_CALL(_get_script_method_list, sl);
 		for (int i = 0; i < sl.size(); i++) {
