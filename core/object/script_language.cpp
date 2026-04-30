@@ -82,10 +82,12 @@ TypedArray<Dictionary> Script::_get_script_property_list() {
 	return ret;
 }
 
-TypedArray<Dictionary> Script::_get_script_method_list() {
+static const StringName poopoo = "PENIS";
+
+TypedArray<Dictionary> Script::_get_script_method_list(bool b_include_base) {
 	TypedArray<Dictionary> ret;
 	List<MethodInfo> list;
-	get_script_method_list(&list);
+	get_script_method_list(&list, b_include_base);
 	for (const MethodInfo &E : list) {
 		ret.append(E.operator Dictionary());
 	}
@@ -175,7 +177,7 @@ void Script::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("has_script_signal", "signal_name"), &Script::has_script_signal);
 
 	ClassDB::bind_method(D_METHOD("get_script_property_list"), &Script::_get_script_property_list);
-	ClassDB::bind_method(D_METHOD("get_script_method_list"), &Script::_get_script_method_list);
+	ClassDB::bind_method(D_METHOD("get_script_method_list", "include_base"), &Script::_get_script_method_list, DEFVAL(true));
 	ClassDB::bind_method(D_METHOD("get_script_signal_list"), &Script::_get_script_signal_list);
 	ClassDB::bind_method(D_METHOD("get_script_constant_map"), &Script::_get_script_constant_map);
 	ClassDB::bind_method(D_METHOD("get_property_default_value", "property"), &Script::_get_property_default_value);

@@ -313,7 +313,7 @@ public:
 
 	bool get_property_default_value(const StringName &p_property, Variant &r_value) const override;
 
-	virtual void get_script_method_list(List<MethodInfo> *p_list) const override;
+	virtual void get_script_method_list(List<MethodInfo> *p_list, bool b_include_base = true) const override;
 	virtual bool has_method(const StringName &p_method) const override;
 	virtual bool has_static_method(const StringName &p_method) const override;
 

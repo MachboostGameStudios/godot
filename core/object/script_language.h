@@ -130,7 +130,7 @@ protected:
 
 	Variant _get_property_default_value(const StringName &p_property);
 	TypedArray<Dictionary> _get_script_property_list();
-	TypedArray<Dictionary> _get_script_method_list();
+	TypedArray<Dictionary> _get_script_method_list(bool b_include_base = true);
 	TypedArray<Dictionary> _get_script_signal_list();
 	Dictionary _get_script_constant_map();
 
@@ -188,7 +188,7 @@ public:
 	virtual bool get_property_default_value(const StringName &p_property, Variant &r_value) const = 0;
 
 	virtual void update_exports() {} //editor tool
-	virtual void get_script_method_list(List<MethodInfo> *p_list) const = 0;
+	virtual void get_script_method_list(List<MethodInfo> *p_list,  bool b_include_base = true) const = 0;
 	virtual void get_script_property_list(List<PropertyInfo> *p_list) const = 0;
 
 	virtual int get_member_line(const StringName &p_member) const { return -1; }

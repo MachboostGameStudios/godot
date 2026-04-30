@@ -304,8 +304,8 @@ void GDScript::_get_script_method_list(List<MethodInfo> *r_list, bool p_include_
 	}
 }
 
-void GDScript::get_script_method_list(List<MethodInfo> *r_list) const {
-	_get_script_method_list(r_list, true);
+void GDScript::get_script_method_list(List<MethodInfo> *r_list, bool p_include_base) const {
+	_get_script_method_list(r_list, p_include_base);
 }
 
 void GDScript::_get_script_property_list(List<PropertyInfo> *r_list, bool p_include_base) const {

@@ -2513,7 +2513,7 @@ void CSharpScript::set_source_code(const String &p_code) {
 #endif
 }
 
-void CSharpScript::get_script_method_list(List<MethodInfo> *p_list) const {
+void CSharpScript::get_script_method_list(List<MethodInfo> *p_list, bool b_include_base = true) const {
 	if (!valid) {
 		return;
 	}
@@ -2522,6 +2522,10 @@ void CSharpScript::get_script_method_list(List<MethodInfo> *p_list) const {
 	while (top != nullptr) {
 		for (const CSharpMethodInfo &E : top->methods) {
 			p_list->push_back(E.method_info);
+		}
+
+		if (!p_include_base) {
+			break;
 		}
 
 		top = top->base_script.ptr();
