@@ -304,11 +304,27 @@ Error ENetConnection::dtls_client_setup(const String &p_hostname, const Ref<TLSO
 }
 
 Error ENetConnection::_create(ENetAddress *p_address, int p_max_peers, int p_max_channels, int p_in_bandwidth, int p_out_bandwidth) {
-	ERR_FAIL_COND_V_MSG(host != nullptr, ERR_ALREADY_IN_USE, "The ENetConnection instance is already active.");
-	ERR_FAIL_COND_V_MSG(p_max_peers < 1 || p_max_peers > 4095, ERR_INVALID_PARAMETER, "The number of clients must be set between 1 and 4095 (inclusive).");
-	ERR_FAIL_COND_V_MSG(p_max_channels < 0 || p_max_channels > ENET_PROTOCOL_MAXIMUM_CHANNEL_COUNT, ERR_INVALID_PARAMETER, "Invalid channel count. Must be between 0 and 255 (0 means maximum, i.e. 255)");
-	ERR_FAIL_COND_V_MSG(p_in_bandwidth < 0, ERR_INVALID_PARAMETER, "The incoming bandwidth limit must be greater than or equal to 0 (0 disables the limit).");
-	ERR_FAIL_COND_V_MSG(p_out_bandwidth < 0, ERR_INVALID_PARAMETER, "The outgoing bandwidth limit must be greater than or equal to 0 (0 disables the limit).");
+
+	if (unlikely(host != nullptr)) {
+		print_error("The ENetConnection instance is already active.");
+		return ERR_ALREADY_IN_USE;
+	}
+	if (unlikely(p_max_peers < 1 || p_max_peers > 4095)) {
+		print_error("The number of clients must be set between 1 and 4095 (inclusive).");
+		return ERR_INVALID_PARAMETER;
+	}
+	if (unlikely(p_max_channels < 0 || p_max_channels > ENET_PROTOCOL_MAXIMUM_CHANNEL_COUNT)) {
+		print_error("Invalid channel count. Must be between 0 and 255 (0 means maximum, i.e. 255)");
+		return ERR_INVALID_PARAMETER;
+	}
+	if (unlikely(p_in_bandwidth < 0)) {
+		print_error("The incoming bandwidth limit must be greater than or equal to 0 (0 disables the limit).");
+		return ERR_INVALID_PARAMETER;
+	}
+	if (unlikely(p_out_bandwidth < 0)) {
+		print_error("The outgoing bandwidth limit must be greater than or equal to 0 (0 disables the limit).");
+		return ERR_INVALID_PARAMETER;
+	}
 
 	host = enet_host_create(p_address /* the address to bind the server host to */,
 			p_max_peers /* allow up to p_max_peers connections */,
@@ -316,7 +332,11 @@ Error ENetConnection::_create(ENetAddress *p_address, int p_max_peers, int p_max
 			p_in_bandwidth /* limit incoming bandwidth if > 0 */,
 			p_out_bandwidth /* limit outgoing bandwidth if > 0 */);
 
-	ERR_FAIL_NULL_V_MSG(host, ERR_CANT_CREATE, "Couldn't create an ENet host.");
+	if (unlikely(host == nullptr)) {
+		print_error("Couldn't create an ENet host.");
+		return ERR_CANT_CREATE;
+	}
+
 	return OK;
 }
 
